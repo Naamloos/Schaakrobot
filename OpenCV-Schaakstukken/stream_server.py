@@ -40,10 +40,10 @@ def process_frame(img):
 			cv.circle(imgcpy, (int(i[0]), int(i[1])), 5, (0, 255, 0))
 
 	# get points in 2 dimensional array
-	#grid = get_pointgrid(intersects, (9, 9))
+	grid = get_pointgrid(intersects, (9, 9))
 
-	#blocks = get_all_blocks_grid(grid, img)
-	return zwartwit, tresh, edges, imgcpy
+	blocks = get_all_blocks_grid(grid, img)
+	return zwartwit, tresh, edges, imgcpy, blocks
 
 
 # functions
@@ -187,8 +187,6 @@ def get_all_blocks_grid(pointgrid, img):
 	for i in range(0, len(pointgrid) - 1, 1):
 		pointgrid[i].sort(key=lambda l: l[1])
 
-	x = pointgrid[0][0][0]
-	xx = pointgrid[1][0][0]
 	wh = int(pointgrid[1][0][0] - pointgrid[0][0][0])
 
 	for i in range(0, len(pointgrid) - 1, 1):
@@ -196,7 +194,9 @@ def get_all_blocks_grid(pointgrid, img):
 		for j in range(0, len(pointgrid[i]) - 1, 1):
 			x1 = int(pointgrid[i][j][0])
 			y1 = int(pointgrid[i][j][1])
-			blocrow.append(img[y1:y1 + wh, x1:x1 + wh])
+			x2 = int(pointgrid[i + 1][j + 1][0])
+			y2 = int(pointgrid[i + 1][j + 1][1])
+			blocrow.append(img[y1:y2, x2:x1])
 		blocs.append(blocrow)
 
 	return blocs;
@@ -214,6 +214,9 @@ print('listening')
 
 # Accept a single connection and make a file-like object out of it
 connection = server_socket.accept()[0].makefile('rb')
+
+i = 0
+j = 0
 
 try:
 	while True:
@@ -233,13 +236,15 @@ try:
 		file_bytes = np.asarray(bytearray(image_stream.read()), dtype=np.uint8)
 		img = cv.imdecode(file_bytes, cv.IMREAD_COLOR)
 
-		p1, p2, p3, p4 = process_frame(img)
+		# TODO: find out whether blocks is correct
+		p1, p2, p3, p4, blocks = process_frame(img)
 
 		cv.imshow("Video", img)
 		cv.imshow("Processed Video1", p1)
 		cv.imshow("Processed Video2", p2)
 		cv.imshow("Processed Video3", p3)
 		cv.imshow("Processed Video4", p4)
+
 		if cv.waitKey(1) == ord("q"):
 			cv.destroyAllWindows()
 			break
