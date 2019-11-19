@@ -121,18 +121,25 @@ def filter_highest(hor, vert):
     return returnhor, returnvert
 
 
-def get_all_blocks(pointgrid, img):
+def get_all_blocks_grid(pointgrid, img):
     blocs = []
 
+    #sort
     pointgrid.sort(key=lambda l: l[0][1])
     for i in range(0, len(pointgrid) - 1, 1):
-        pointgrid[i].sort(key=lambda l: l[0])
+        pointgrid[i].sort(key=lambda l: l[1])
+
+    x = pointgrid[0][0][0]
+    xx = pointgrid[1][0][0]
+    wh = int(pointgrid[1][0][0] - pointgrid[0][0][0])
+
+    for i in range(0, len(pointgrid) - 1, 1):
+        blocrow = []
         for j in range(0, len(pointgrid[i]) - 1, 1):
             x1 = int(pointgrid[i][j][0])
             y1 = int(pointgrid[i][j][1])
-            x2 = int(pointgrid[i+1][j+1][0])
-            y2 = int(pointgrid[i+1][j+1][1])
-            blocs.append(img[y1:y2+1, x1:x2+1])
+            blocrow.append(img[y1:y1+wh, x1:x1+wh])
+        blocs.append(blocrow)
 
     return blocs;
 
@@ -173,7 +180,7 @@ for i in intersects:
 # get points in 2 dimensional array
 grid = get_pointgrid(intersects, (9,9))
 
-blocks = get_all_blocks(grid, img)
+blocks = get_all_blocks_grid(grid, img)
 
 # print all img versions
 cv.imshow('Original Image', img)
