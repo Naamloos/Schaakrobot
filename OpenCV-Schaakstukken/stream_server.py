@@ -164,8 +164,8 @@ def filter_highest(hor, vert):
 	returnvert = vert
 	returnhor = hor
 
-	#highy = max(hor, key=lambda l: l[0][1])[0][1]
-	#returnhor = list(filter(lambda l: l[0][1] != highy, hor))
+	highy = max(hor, key=lambda l: l[0][1])[0][1]
+	returnhor = list(filter(lambda l: l[0][1] != highy, hor))
 
 	lowy = min(hor, key=lambda l: l[0][1])[0][1]
 	returnhor = list(filter(lambda l: l[0][1] != lowy, returnhor))
@@ -194,9 +194,7 @@ def get_all_blocks_grid(pointgrid, img):
 		for j in range(0, len(pointgrid[i]) - 1, 1):
 			x1 = int(pointgrid[i][j][0])
 			y1 = int(pointgrid[i][j][1])
-			x2 = int(pointgrid[i + 1][j + 1][0])
-			y2 = int(pointgrid[i + 1][j + 1][1])
-			blocrow.append(img[y1:y2, x2:x1])
+			blocrow.append(img[y1 : y1+wh, x1 : x1+wh])
 		blocs.append(blocrow)
 
 	return blocs;
@@ -244,6 +242,7 @@ try:
 		cv.imshow("Processed Video2", p2)
 		cv.imshow("Processed Video3", p3)
 		cv.imshow("Processed Video4", p4)
+
 
 		if cv.waitKey(1) == ord("q"):
 			cv.destroyAllWindows()
