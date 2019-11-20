@@ -40,10 +40,12 @@ def process_frame(img):
 			cv.circle(imgcpy, (int(i[0]), int(i[1])), 5, (0, 255, 0))
 
 	# get points in 2 dimensional array
-	grid = get_pointgrid(intersects, (9, 9))
+	#grid = get_pointgrid(intersects, (9, 9))
 
-	blocks = get_all_blocks_grid(grid, img)
-	return zwartwit, tresh, edges, imgcpy, blocks
+	#blocks = get_all_blocks_grid(grid, img)
+
+	CheckLineCount(hor, vert, imgcpy)
+	return zwartwit, tresh, edges, imgcpy, None
 
 
 # functions
@@ -164,17 +166,19 @@ def filter_highest(hor, vert):
 	returnvert = vert
 	returnhor = hor
 
-	highy = max(hor, key=lambda l: l[0][1])[0][1]
-	returnhor = list(filter(lambda l: l[0][1] != highy, hor))
+	if(any(hor)):
+		highy = max(hor, key=lambda l: l[0][1])[0][1]
+		returnhor = list(filter(lambda l: l[0][1] != highy, hor))
 
-	lowy = min(hor, key=lambda l: l[0][1])[0][1]
-	returnhor = list(filter(lambda l: l[0][1] != lowy, returnhor))
+		lowy = min(hor, key=lambda l: l[0][1])[0][1]
+		returnhor = list(filter(lambda l: l[0][1] != lowy, returnhor))
 
-	highx = max(vert, key=lambda l: l[0][0])[0][0]
-	returnvert = list(filter(lambda l: l[0][0] != highx, vert))
+	if(any(vert)):
+		highx = max(vert, key=lambda l: l[0][0])[0][0]
+		returnvert = list(filter(lambda l: l[0][0] != highx, vert))
 
-	lowx = min(vert, key=lambda l: l[0][0])[0][0]
-	returnvert = list(filter(lambda l: l[0][0] != lowx, returnvert))
+		lowx = min(vert, key=lambda l: l[0][0])[0][0]
+		returnvert = list(filter(lambda l: l[0][0] != lowx, returnvert))
 
 	return returnhor, returnvert
 
@@ -200,13 +204,22 @@ def get_all_blocks_grid(pointgrid, img):
 	return blocs;
 
 
+def CheckLineCount(hor, vert, img):
+	color = (0,0,255)
+
+	if(len(hor) == 9 and len(vert) == 9):
+		color = (0,255,0)
+
+	cv.rectangle(img, (0,0), (45,45), color, 2)
+
+
 # End functions
 
 
 # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
 # all interfaces)
 server_socket = socket.socket()
-server_socket.bind(('192.168.0.103', 8002))
+server_socket.bind(('192.168.0.100', 8002))
 server_socket.listen(0)
 print('listening')
 
