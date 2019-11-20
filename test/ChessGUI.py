@@ -1,13 +1,13 @@
 from tkinter import *
 import chess
 import chess.engine
-from PIL import Image
+#from PIL import Image
 
 window = Tk()  # This thing is the window.
 board = chess.Board()  # The chess board on which you'll be playing.
 engine = chess.engine.SimpleEngine.popen_uci(
     'stockfish-10-win/Windows/stockfish_10_x64.exe')  # The engine you're gonna lose to.
-ai = FALSE  # Boolean to decide if we're playing against the AI. DO NOT TOUCH AS IT CURRENTLY BREAKS THE CODE
+ai = TRUE  # Boolean to decide if we're playing against the AI. DO NOT TOUCH AS IT CURRENTLY BREAKS THE CODE
 moveCounter = 0  # Counter for if we're gonna be playing human versus human
 window.title("Chess GUI")  # Setting a nice title.
 window.geometry('680x700')  # TODO: BRAM VIND MOOIE RESOLUTIE
@@ -33,12 +33,18 @@ def switch(arg):  # TODO: BRAM ZORG DAT DIT WERKT
     file = switch.get(arg, ".")
     return file
 
+#outputLabel = Label(window, text="", height=2, width=4).grid(column=12, row=12)
 
 # Function to send the move to the board, input it into the AI if active, and update the GUI
 def sendMove(moveToSend):
     global moveCounter
-    move = inputMove.get()
-    board.push_san(move)
+    #move = inputMove.get()
+    move = moveToSend
+    try:
+        board.push_san(move)
+    except:
+        print("dat mag niet boef")
+
     # Are we playing against the AI? Default is TRUE for now.
     if ai == TRUE:
         result = engine.play(board, chess.engine.Limit(time=0.1))
@@ -63,28 +69,59 @@ def sendMove(moveToSend):
     print(moveCounter)
 
 
+first_pos = ''
+
+def callback(POS):
+    global first_pos
+
+    if first_pos == '':
+        first_pos = POS
+        Label(window, text=POS, height=2, width=4).grid(column=12, row=12)
+    else:
+        old_pos = first_pos;
+        sanMove  = old_pos + POS
+        sendMove(sanMove)
+        Label(window, text=sanMove, height=2, width=4).grid(column=12, row=12)
+        first_pos = ''
+
+
+
+
+
+
 def generateBoard():
-    counterY = 0
-    counterX = 0
+    counterY = 1
+    counterX = 1
+
+    letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
+
     posArray = list(str(board))
     while ' ' in posArray: posArray.remove(' ')
     for x in posArray:
+        Label(window, text=9-counterY, height=2, width=4).grid(column=0, row=counterY) #getallen aan de zijkant
+        Label(window, text=letters[8-counterY], height=2, width=4).grid(column=9 - counterY, row=0)  # getallen aan de zijkant
+
         if x != '\n':
             #            piecePic = switch(x)
+            currentLetter = letters[counterX-1]
+            currentPos = currentLetter + str(9-counterY)
+            currentText = x+currentPos;
+            click = lambda n: lambda: callback(n)
+
             if x != ".":  # image = piecePic
-                piece = Button(window, text=x, height=5, width=10).grid(column=counterX, row=counterY)
+                btn = Button(window, text=x, height=2, width=4, command=click(currentText)).grid(column=counterX, row=counterY)
             else:
-                piece = Button(window, text=x, height=5, width=10).grid(column=counterX, row=counterY)
+                btn = Button(window, text=x, height=2, width=4, command=click(currentText)).grid(column=counterX, row=counterY)
             counterX = counterX + 1
         else:
             counterY = counterY + 1
-            counterX = 0
+            counterX = 1
 
-
+#invoeren van een move via de entry
 inputMove = Entry(window)
-inputMove.grid(column=0, row=9)
+inputMove.grid(column=10, row=10)
 submit = Button(window, text="send move")
 submit.bind("<Button-1>", sendMove)
-submit.grid(column=1, row=9)
+submit.grid(column=11, row=10)
 generateBoard()
 window.mainloop()
