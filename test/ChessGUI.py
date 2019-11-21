@@ -59,6 +59,7 @@ def sendMove(moveToSend):
 
         # Update the board after the move was set.
         generateBoard()
+        #change_pos(POS, selectedPiece, 'lightgrey')
 
         # Are we playing against AI?
         if ai == TRUE:
@@ -91,20 +92,21 @@ def callback(POS, PIECE):
             piece_start_pos = POS
 
             #maakt de knop rood
-            change_color(POS, PIECE, "red")
+            change_pos(POS, PIECE, "red")
 
             Label(window, text=PIECE, height=2, width=4).grid(column=12, row=12)
     else:
         old_pos = selectedPiece
         san_move = old_pos + POS  # als het een pion is moet er geen P voor
 
-        change_color(POS, selectedPiece, 'lightgrey')
+        change_pos(piece_start_pos, selectedPiece, 'lightgrey')
+        change_pos(Pos, PIECE, "lightgrey")
 
         sendMove(san_move)
         Label(window, text=PIECE, height=2, width=4).grid(column=12, row=12)
         selectedPiece = "0"
 
-def change_color(pos, piece, color):
+def change_pos(pos, piece, color):
     Xval = letters.index(pos[0]) + 1
     Yval = 9 - int(pos[1])
     Button(window, text=piece, height=2, width=4, bg=color,

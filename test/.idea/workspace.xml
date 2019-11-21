@@ -93,7 +93,7 @@
       <updated>1573815851590</updated>
       <workItem from="1574250567873" duration="18000" />
       <workItem from="1574250713251" duration="692000" />
-      <workItem from="1574251585551" duration="26273000" />
+      <workItem from="1574251585551" duration="27380000" />
     </task>
     <servers />
   </component>
@@ -114,6 +114,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/test$ChessGUI.coverage" NAME="ChessGUI Coverage Results" MODIFIED="1574328261042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/test$ChessGUI.coverage" NAME="ChessGUI Coverage Results" MODIFIED="1574329367405" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
