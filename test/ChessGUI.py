@@ -113,7 +113,11 @@ def callback(POS, PIECE):
         Label(window, text=PIECE, height=2, width=4).grid(column=12, row=12)
         selectedPiece = "0"
 
-
+def set_move(pos, piece, color):
+    Xval = letters.index(pos[0]) + 1
+    Yval = 9 - int(pos[1])
+    Button(window, text=piece, height=2, width=4, bg=color,
+   command=click(pos, piece)).grid(column=Xval, row=Yval)
 
 
 def generateBoard():
