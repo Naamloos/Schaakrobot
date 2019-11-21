@@ -15,10 +15,11 @@
     <option name="defaultAccountId" value="0ec8ee29-6fcc-4446-bcbc-1b6aadf4deeb" />
   </component>
   <component name="ProjectId" id="1TeLwHmZRCxfy8Opf61OwzUKSoW" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -91,7 +92,36 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1573815851590</updated>
+<<<<<<< HEAD
+=======
+      <workItem from="1574250567873" duration="18000" />
+      <workItem from="1574250713251" duration="692000" />
+<<<<<<< HEAD
+      <workItem from="1574251585551" duration="28212000" />
+=======
+      <workItem from="1574251585551" duration="27798000" />
+>>>>>>> bf4f4b42030100ba7b73c5e7120f1e816c4f2f62
+>>>>>>> c256a2e54ae2a37bc931c8ad654be3416053c308
     </task>
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+<<<<<<< HEAD
+=======
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/test$ChessGUI.coverage" NAME="ChessGUI Coverage Results" MODIFIED="1574330297919" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+>>>>>>> bf4f4b42030100ba7b73c5e7120f1e816c4f2f62
 </project>
