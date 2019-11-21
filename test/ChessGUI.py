@@ -86,34 +86,25 @@ def callback(POS, PIECE):
 
     if selectedPiece == "0":
         if PIECE != ".":
-            if PIECE != "p" and PIECE != "P":
-                selectedPiece = PIECE
-            else:
-                selectedPiece = ""
+            selectedPiece = PIECE
 
             piece_start_pos = POS
 
             #maakt de knop rood
-            Xval = letters.index(POS[0]) + 1
-            Yval = 9 - int(POS[1])
-            Button(window, text=PIECE, height=2, width=4, bg='red',
-            command=click(POS, PIECE)).grid(column=Xval,row=Yval)
+            change_color(POS, PIECE, "red")
 
             Label(window, text=PIECE, height=2, width=4).grid(column=12, row=12)
     else:
         old_pos = selectedPiece
         san_move = old_pos + POS  # als het een pion is moet er geen P voor
 
-        Xval = letters.index(piece_start_pos[0]) + 1
-        Yval = 9 - int(piece_start_pos[1])
-        Button(window, text=selectedPiece, height=2, width=4, bg='white',
-        command=click(POS, selectedPiece)).grid(column=Xval, row=Yval)
+        change_color(POS, selectedPiece, 'lightgrey')
 
         sendMove(san_move)
         Label(window, text=PIECE, height=2, width=4).grid(column=12, row=12)
         selectedPiece = "0"
 
-def set_move(pos, piece, color):
+def change_color(pos, piece, color):
     Xval = letters.index(pos[0]) + 1
     Yval = 9 - int(pos[1])
     Button(window, text=piece, height=2, width=4, bg=color,
