@@ -1,9 +1,11 @@
 from tkinter import *
 import chess
 import chess.engine
+<<<<<<< HEAD
 
 # from PIL import Image
 # pip install Pillow==2.2.2
+>>>>>>> 5477c741f7d3885ac092e6ed3e8516cfaf73abd7
 window = Tk()  # This thing is the window.
 board = chess.Board()  # The chess board on which you'll be playing.
 engine = chess.engine.SimpleEngine.popen_uci(
@@ -126,10 +128,13 @@ def callback(POS, PIECE):
 
 
 def change_pos(pos, piece, color):
+<<<<<<< HEAD
     Xval = letters.index(pos[0]) + 1
     Yval = 9 - int(pos[1])
     Button(window, text=piece, height=2, width=4, bg=color,
            command=click(pos, piece)).grid(column=Xval, row=Yval)
+=======
+>>>>>>> 5477c741f7d3885ac092e6ed3e8516cfaf73abd7
 
 
 def generateBoard():
@@ -150,18 +155,24 @@ def generateBoard():
             # currentText = x+currentPos;
 
             if x != ".":  # image = piecePic
+<<<<<<< HEAD
                 btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX,
                                                                                                    row=counterY)
             else:
                 btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX,
                                                                                                    row=counterY)
+=======
+>>>>>>> 5477c741f7d3885ac092e6ed3e8516cfaf73abd7
             counterX = counterX + 1
         else:
             counterY = counterY + 1
             counterX = 1
 
+<<<<<<< HEAD
 
 # invoeren van een move via de entry
+=======
+>>>>>>> 5477c741f7d3885ac092e6ed3e8516cfaf73abd7
 inputMove = Entry(window)
 inputMove.grid(column=10, row=10)
 submit = Button(window, text="send move")
