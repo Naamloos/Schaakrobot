@@ -96,14 +96,17 @@ def callback(POS, PIECE):
 
             Label(window, text=PIECE, height=2, width=4).grid(column=12, row=12)
     else:
-        old_pos = selectedPiece
-        san_move = old_pos + POS  # als het een pion is moet er geen P voor
-
+        moved_piece = selectedPiece
+          # als het een pion is moet er geen P voor
+        if moved_piece == 'P' or moved_piece == 'p':
+            san_move = POS
+        else:
+            san_move = moved_piece + POS
         change_pos(piece_start_pos, selectedPiece, 'lightgrey')
-        change_pos(Pos, PIECE, "lightgrey")
+        change_pos(POS, PIECE, "lightgrey")
 
         sendMove(san_move)
-        Label(window, text=PIECE, height=2, width=4).grid(column=12, row=12)
+        Label(window, text=san_move, height=2, width=4).grid(column=12, row=12)
         selectedPiece = "0"
 
 def change_pos(pos, piece, color):
@@ -129,38 +132,6 @@ def generateBoard():
             currentLetter = letters[counterX-1]
             currentPos = currentLetter + str(9-counterY)
             #currentText = x+currentPos;
-
-            if x != ".":  # image = piecePic
-                btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX, row=counterY)
-            else:
-                btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX, row=counterY)
-            counterX = counterX + 1
-        else:
-            counterY = counterY + 1
-            counterX = 1
-
-
-
-
-
-def generateBoard():
-    counterY = 1
-    counterX = 1
-
-    letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
-
-    posArray = list(str(board))
-    while ' ' in posArray: posArray.remove(' ')
-    for x in posArray:
-        Label(window, text=9-counterY, height=2, width=4).grid(column=0, row=counterY) #getallen aan de zijkant
-        Label(window, text=letters[8-counterY], height=2, width=4).grid(column=9 - counterY, row=0)  # getallen aan de zijkant
-
-        if x != '\n':
-            #            piecePic = switch(x)
-            currentLetter = letters[counterX-1]
-            currentPos = currentLetter + str(9-counterY)
-            currentText = x+currentPos;
-            click = lambda n,m: lambda: callback(n,m)
 
             if x != ".":  # image = piecePic
                 btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX, row=counterY)
