@@ -6,16 +6,22 @@ camera = picv.PiCV()
 
 camera.connect()
 
-frame = camera.getFrame()
-
 foundgrid = False
 
-while not foundgrid:
-    frame = camera.getFrame()
-    cv.imshow('video', frame)
-    foundgrid, grid = camera.TryFindGrid(frame)
 
+# Dit uitvoeren na bewegen naar startpositie
+print('Finding grid...')
+grid = camera.TryFindGrid()
+print('Grid found.')
+
+cv.destroyAllWindows()
 cv.imshow('grid', grid)
 
-while True:
-    cv.imshow('video', frame)
+for i in range(0, 8):
+    for j in range(0, 8):
+        ig = camera.GetSquare(i, j)
+        cv.imshow(str(i + 1) + "x" + str(j + 1), ig)
+
+#cv.imshow('s', m)
+
+cv.waitKey(0)
