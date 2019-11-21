@@ -1,10 +1,10 @@
 from tkinter import *
 import chess
 import chess.engine
-from tkinter import *
+#from Pil import Image
 #from Pillow import Image, Image
 #easy_install Pillow==
-
+#python setup.py install
 
 window = Tk()  # This thing is the window.
 board = chess.Board()  # The chess board on which you'll be playing.
@@ -150,8 +150,8 @@ def type_move():
     sendMove
 #invoeren van een move via de entry
 
-# load = Image.open("parrot.jpg")
-# render = Image.PhotoImage(load)
+# load = Image.open("SchaakstukkenPNGs/PionBlauw.png")
+# render = ImageTk.PhotoImage(load)
 # img = Label(self, image=render)
 # img.image = render
 # img.place(x=0, y=0)
