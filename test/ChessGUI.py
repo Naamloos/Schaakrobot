@@ -1,22 +1,19 @@
 from tkinter import *
 import chess
 import chess.engine
-# from PIL import Image
-# pip install Pillow==2.2.2
 from tkinter import *
-#from Pillow import Image, Image
-#easy_install Pillow==
-#python setup.py install
+
+#installeer het CHEQ.TT.TTF bestand voor het custom font
 
 
-window = Tk()  # This thing is the window.
-board = chess.Board()  # The chess board on which you'll be playing.
-engine = chess.engine.SimpleEngine.popen_uci(
-    'stockfish-10-win/Windows/stockfish_10_x64.exe')  # The engine you're gonna lose to.
+window = Tk()
+board = chess.Board()
+engine = chess.engine.SimpleEngine.popen_uci('stockfish-10-win/Windows/stockfish_10_x64.exe')  #Engine
+
 ai = TRUE  # Boolean to decide if we're playing against the AI. DO NOT TOUCH AS IT CURRENTLY BREAKS THE CODE
 moveCounter = 0  # Counter for if we're gonna be playing human versus human
 window.title("Chess GUI")  # Setting a nice title.
-window.geometry('680x700')  # TODO: BRAM VIND MOOIE RESOLUTIE
+window.geometry('1100x700')
 squares = ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8",
            "b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8",
            "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8",
@@ -27,6 +24,9 @@ squares = ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8",
            "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8"]
 letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
 
+chess_font = "Chess-7 18"
+tile_height = 2
+tile_width = 3
 
 # Makeshift Switch function that converts the letters into pictures.
 # @arg: The letter we're gonna convert.
@@ -100,20 +100,20 @@ piece_start_pos = ""
 def callback(POS, PIECE):
     global selectedPiece
     global piece_start_pos
-
     if selectedPiece == "0":
-        if PIECE != ".":
+        if PIECE != "." and PIECE.isupper():
             selectedPiece = PIECE
             piece_start_pos = POS
 
             # maakt de knop rood
-            change_pos(POS, PIECE, "red")
+            change_pos(POS, PIECE, "pink")
             for move in squares:
                 if POS!= move:
                     gluePos = POS + move
                     compare = chess.Move.from_uci(gluePos)
                     if compare in board.legal_moves:
                         print(gluePos) #TODO: Colour the squares
+                        change_color(gluePos)
             Label(window, text=PIECE, height=2, width=4).grid(column=12, row=12)
     else:
         moved_piece = selectedPiece
@@ -122,25 +122,47 @@ def callback(POS, PIECE):
             san_move = piece_start_pos + POS
         else:
             san_move = moved_piece + POS
-        change_pos(piece_start_pos, selectedPiece, 'white')
+
         change_pos(POS, PIECE, "white")
+        change_pos(piece_start_pos, selectedPiece, 'white')
+        for move in squares:
+            if piece_start_pos != move:
+                gluePos = piece_start_pos + move
+                compare = chess.Move.from_uci(gluePos)
+                if compare in board.legal_moves:
+                    print(gluePos)  # TODO: Colour the squares
+                    change_color_white(gluePos)
 
         sendMove(san_move)
         Label(window, text=san_move, height=2, width=4).grid(column=12, row=12)
         selectedPiece = "0"
 
 
+
+def change_color_white(possiblePosition):
+    column = letters.index(possiblePosition[2]) + 1
+    row = 9 - int(possiblePosition[3])
+    for i in window.grid_slaves(row, column):
+        i.configure(background='white')
+
+def change_color(possiblePosition):
+    column = letters.index(possiblePosition[2]) + 1
+    row = 9 - int(possiblePosition[3])
+    for i in window.grid_slaves(row, column):
+        if i.cget('text') == ".":
+            i.configure(background='lightgreen')
+        else:
+            i.configure(background='yellow')
+
 def change_pos(pos, piece, color):
-
-    Xval = letters.index(pos[0]) + 1
-    Yval = 9 - int(pos[1])
-    Button(window, text=piece, height=2, width=4, bg=color,
-           command=click(pos, piece)).grid(column=Xval, row=Yval)
-
+    if piece.isupper():
+        textcolor = "red"
+    else:
+        textcolor = "blue"
     Xval = letters.index(pos[0]) + 1 #bepaald de xpositie en zet deze om naar een rij
     Yval = 9 - int(pos[1])          #zet de ypositie om naar een kolom
-    Button(window, text=piece, height=2, width=4, bg=color, command=click(pos, piece)).grid(column=Xval, row=Yval)
-
+    Button(window, text=piece, height=tile_height, width=tile_width, bg=color, font=chess_font,
+           fg=textcolor, highlightthickness=0, bd=0, command=click(pos, piece)).grid(column=Xval, row=Yval)
 
 
 def generateBoard():
@@ -161,18 +183,27 @@ def generateBoard():
             # currentText = x+currentPos;
 
             if x != ".":  # image = piecePic
-
-                btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX,
-                                                                                                   row=counterY)
+                if x.isupper():
+                    btn = Button(window, text=x, height=tile_height, width=tile_width, foreground="red",
+                                 highlightthickness=0, bd=2, bg="white",
+                                 font=chess_font, highlightbackground="black",
+                                 command=click(currentPos, x)).grid(column=counterX, row=counterY)
+                else:
+                    btn = Button(window, text=x,  height=tile_height, width=tile_width, foreground="blue", highlightthickness=0, bd=2, bg="white",
+                                 font=chess_font, highlightbackground="black", command=click(currentPos, x)).grid(column=counterX, row=counterY)
             else:
-                btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX,row=counterY)
+                #btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX,row=counterY)
 
-                btn = Button(window, text=x, height=2, width=4, bg="white", command=click(currentPos, x)).grid(column=counterX, row=counterY)
+                btn = Button(window, text=x, height=tile_height, width=tile_width, highlightthickness=0, bd=2, highlightbackground="black",
+                             bg="white", font=chess_font, foreground="white", command=click(currentPos, x)).grid(column=counterX, row=counterY)
 
             counterX = counterX + 1
         else:
             counterY = counterY + 1
             counterX = 1
+    if board.is_game_over():
+        Label(window, font="Helvetica 30 bold", width=4).grid(column=10, row=4)  # getallen aan de zijkant
+        Label(window, text="GAME OVER", font="Helvetica 30 bold").grid(column=11, row=4)  # getallen aan de zijkant
 
 
 
@@ -190,10 +221,10 @@ def type_move():
 # img.image = render
 # img.place(x=0, y=0)
 
-inputMove = Entry(window)
-inputMove.grid(column=10, row=10)
-submit = Button(window, text="send move")
-submit.bind("<Button-1>", sendMove)
-submit.grid(column=11, row=10)
+# inputMove = Entry(window)
+# inputMove.grid(column=10, row=10)
+# submit = Button(window, text="send move")
+# submit.bind("<Button-1>", sendMove)
+# submit.grid(column=11, row=10)
 generateBoard()
 window.mainloop()
