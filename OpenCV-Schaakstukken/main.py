@@ -20,15 +20,9 @@ print('Grid found.')
 cv.destroyAllWindows()
 
 cv.imshow('grid', grid)
-cv.waitKey(0)
 
-for i in range(0, 8):
+for i in range(0,8):
     for j in range(0,8):
-        pion = camera.GetSquare(7, 2)
-        match, shapename = comp.detectpiece(pion)
-
-        if match:
-            print('found: ' + shapename)
-        else:
-            print('no matches')
-        pass
+        pion = camera.GetSquare(j, i)
+        match, shapename, matchcount = comp.detectpiece(pion)
+        print('x' + str(j) + 'y' + str(i) + ' matches: ' + str(matchcount))
