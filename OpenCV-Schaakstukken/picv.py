@@ -8,6 +8,7 @@ import copy
 
 class PiCV:
     connection = None
+    intersects = None
 
     def __init__(self):
         pass
@@ -23,16 +24,14 @@ class PiCV:
         self.connection = server_socket.accept()[0].makefile('rb')
 
 
-    def getFrame(self):
-        # Read the length of the image as a 32-bit unsigned int. If the
-        # length is zero, quit the loop
-        image_len = struct.unpack('<L', self.connection.read(struct.calcsize('<L')))[0]
+    def getFrame(self, connection):
+        image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
         if not image_len:
-            return None
+            return
         # Construct a stream to hold the image data and read the image
         # data from the connection
         image_stream = io.BytesIO()
-        image_stream.write(self.connection.read(image_len))
+        image_stream.write(connection.read(image_len))
         # Rewind the stream, open it as an image with PIL and do some
         # processing on it
         image_stream.seek(0)
@@ -43,38 +42,45 @@ class PiCV:
         return img
 
 
-    def TryFindGrid(self, img):
-        imgcpy = copy.copy(img)
+    def TryFindGrid(self):
+        found = False
+        conn = self.connection
+        while not found:
+            img = self.getFrame(conn);
+            imgcpy = copy.copy(img)
 
-        # make grayscale version
-        zwartwit = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+            # make grayscale version
+            zwartwit = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
-        # make binary threshold
-        tresh = cv.adaptiveThreshold(zwartwit, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 111, 6)
+            # make binary threshold
+            tresh = cv.adaptiveThreshold(zwartwit, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 111, 6)
 
-        # edge detection on the binary threshold
-        edges = cv.Canny(tresh, 100, 800)
+            # edge detection on the binary threshold
+            edges = cv.Canny(tresh, 100, 800)
 
-        # find lines
-        lines = cv.HoughLines(edges, 0.55, np.pi / 175, 75)
+            # find lines
+            lines = cv.HoughLines(edges, 0.55, np.pi / 175, 75)
 
-        hor, vert = self.divideHorizontalVerticalLines(lines)
+            hor, vert = self.divideHorizontalVerticalLines(lines)
 
-        hor, vert = self.filterDoubles(hor, vert)
+            hor, vert = self.filterDoubles(hor, vert)
 
-        hor, vert = self.filterHighest(hor, vert)
+            hor, vert = self.filterHighest(hor, vert)
 
-        self.drawlines(hor, (255, 0, 0), imgcpy)
-        self.drawlines(vert, (0, 0, 255), imgcpy)
+            self.drawlines(hor, (255, 0, 0), imgcpy)
+            self.drawlines(vert, (0, 0, 255), imgcpy)
 
-        # finding all line intersects
-        intersects = self.find_intersects(hor, vert)
+            # finding all line intersects
+            intersects = self.find_intersects(hor, vert)
 
-        for i in intersects:
-            if i[0] != float('inf') or i[1] != float('inf'):
-                cv.circle(imgcpy, (int(i[0]), int(i[1])), 5, (0, 255, 0))
+            for i in intersects:
+                if i[0] != float('inf') or i[1] != float('inf'):
+                    cv.circle(imgcpy, (int(i[0]), int(i[1])), 5, (0, 255, 0))
 
-        return self.CheckLineCount(hor, vert, imgcpy), imgcpy
+            found = self.CheckLineCount(hor, vert, imgcpy)
+
+        self.intersects = intersects
+        return imgcpy
 
 
     def drawlines(self, lines, color, img):
@@ -160,14 +166,6 @@ class PiCV:
                 # f(x) = y
                 intersects.append(self.get_intersect(l1[0], l1[1], l2[0], l2[1]))
 
-        for l1 in vert:
-            for l2 in hor:
-                # loop through all lines and find intersections
-                # line intersect point == f(x) = g(x)
-                # f(x) = ax + b
-                # f(x) = y
-                intersects.append(self.get_intersect(l1[0], l1[1], l2[0], l2[1]))
-
         return intersects
 
     # https://stackoverflow.com/questions/3252194/numpy-and-line-intersections
@@ -194,3 +192,44 @@ class PiCV:
             return True
 
         return False
+
+    def get_pointgrid(self, intersects, gridsize):
+        tlist = list(intersects)
+
+        gridwidth = gridsize[0]
+        gridheight = gridsize[1]
+
+        grid = list()
+
+        for i in range(0, gridwidth):
+            arr = list()
+            for j in range(0, gridheight):
+                arr.append(intersects[i + (gridheight * j)])
+            arr.sort(key=lambda s: s[1])
+            grid.append(arr)
+
+        grid.sort(key= lambda s: s[0][0])
+
+        return grid
+
+
+    def CompareFeatures(self, src, query):
+        pass
+
+
+    def GetSquare(self, hor, vert):
+        frame = self.getFrame(self.connection)
+        i = self.get_pointgrid(self.intersects, (9, 9))
+
+        p1 = i[hor][vert]
+        p2 = i[hor + 1][vert]
+        p3 = i[hor][vert + 1]
+
+        x = int(p1[0])
+        y = int(p1[1])
+        w = abs(int(p1[0] - p2[0]))
+        h = abs(int(p1[1] - p3[1]))
+
+        cutout = frame[y:y+h, x:x+w]
+
+        return cutout
