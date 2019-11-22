@@ -102,7 +102,7 @@ def callback(POS, PIECE):
     global piece_start_pos
 
     if selectedPiece == "0":
-        if PIECE != ".":
+        if PIECE != "." and PIECE.isupper():
             selectedPiece = PIECE
             piece_start_pos = POS
 
@@ -114,6 +114,7 @@ def callback(POS, PIECE):
                     compare = chess.Move.from_uci(gluePos)
                     if compare in board.legal_moves:
                         print(gluePos) #TODO: Colour the squares
+                        change_color(gluePos)
             Label(window, text=PIECE, height=2, width=4).grid(column=12, row=12)
     else:
         moved_piece = selectedPiece
@@ -122,13 +123,38 @@ def callback(POS, PIECE):
             san_move = piece_start_pos + POS
         else:
             san_move = moved_piece + POS
-        change_pos(piece_start_pos, selectedPiece, 'white')
+
         change_pos(POS, PIECE, "white")
+        change_pos(piece_start_pos, selectedPiece, 'SystemButtonFace')
+        for move in squares:
+            if piece_start_pos != move:
+                gluePos = piece_start_pos + move
+                compare = chess.Move.from_uci(gluePos)
+                if compare in board.legal_moves:
+                    print(gluePos)  # TODO: Colour the squares
+                    change_color_white(gluePos)
 
         sendMove(san_move)
         Label(window, text=san_move, height=2, width=4).grid(column=12, row=12)
         selectedPiece = "0"
 
+def change_color_white(possiblePosition):
+    column = letters.index(possiblePosition[2]) + 1
+    row = 9 - int(possiblePosition[3])
+    for i in window.grid_slaves(row, column):
+        if i.cget('text') == ".":
+            i.configure(background='white')
+        else:
+            i.configure(background='SystemButtonFace')
+
+def change_color(possiblePosition):
+    column = letters.index(possiblePosition[2]) + 1
+    row = 9 - int(possiblePosition[3])
+    for i in window.grid_slaves(row, column):
+        if i.cget('text') == ".":
+            i.configure(background='lightgreen')
+        else:
+            i.configure(background='yellow')
 
 def change_pos(pos, piece, color):
 
@@ -161,13 +187,14 @@ def generateBoard():
             # currentText = x+currentPos;
 
             if x != ".":  # image = piecePic
-
-                btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX,
-                                                                                                   row=counterY)
+                if x.isupper():
+                    btn = Button(window, text=x, height=2, width=4, foreground="red", font='Helvetica 8 bold', command=click(currentPos, x)).grid(column=counterX, row=counterY)
+                else:
+                    btn = Button(window, text=x, height=2, width=4, foreground="blue", font='Helvetica 8 bold', command=click(currentPos, x)).grid(column=counterX, row=counterY)
             else:
-                btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX,row=counterY)
+                #btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX,row=counterY)
 
-                btn = Button(window, text=x, height=2, width=4, bg="white", command=click(currentPos, x)).grid(column=counterX, row=counterY)
+                btn = Button(window, text=x, height=2, width=4, bg="white", foreground="white", command=click(currentPos, x)).grid(column=counterX, row=counterY)
 
             counterX = counterX + 1
         else:
