@@ -3,7 +3,7 @@ import chess
 import chess.engine
 from tkinter import *
 
-#installeer het CHEQ.TT.TTF bestand voor het custom font
+#installeer het TTF bestand voor het custom font
 
 
 window = Tk()
@@ -27,6 +27,8 @@ letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
 chess_font = "Chess-7 18"
 tile_height = 2
 tile_width = 3
+
+set_moves = []
 
 # Makeshift Switch function that converts the letters into pictures.
 # @arg: The letter we're gonna convert.
@@ -52,7 +54,7 @@ def switch(arg):  # TODO: BRAM ZORG DAT DIT WERKT
 # outputLabel = Label(window, text="", height=2, width=4).grid(column=12, row=12)
 
 # Function to send the move to the board, input it into the AI if active, and update the GUI
-def sendMove(moveToSend):
+def sendMove(moveToSend, start_piece, end_piece, start_pos, end_pos):
     global moveCounter
     userMoveValid = TRUE
 
@@ -61,7 +63,7 @@ def sendMove(moveToSend):
     try:
         board.push_san(move)
     except:
-        print("dat mag niet boef")
+        #print("dat mag niet boef")
         userMoveValid = FALSE
 
     if userMoveValid:
@@ -71,24 +73,46 @@ def sendMove(moveToSend):
             stockfishMove = result.move
             board.push(stockfishMove)
 
-        # Update the board after the move was set.
-        generateBoard()
-        # change_pos(POS, selectedPiece, 'lightgrey')
+
 
         # Are we playing against AI?
         if ai == TRUE:
-            movesToPrint = move + "-" + str(stockfishMove) + "\n"  # TODO: BRAM ZET DIT MOOI NEER
-        # No, we're not.
-        # TODO:BRAM check if u need this
-        else:
-            moveCounter += 1
-            # Is player 2 playing?
-            if moveCounter % 2 != 0:
-                movesToPrint = move
-            else:
-                movesToPrint = "-" + move + "\n"
-            print(moveCounter)
-        print(movesToPrint)
+            movesToPrint = move + "-" + str(stockfishMove) + "\n"
+
+            move_to_robot(start_pos, end_pos, start_piece, end_piece)
+
+            first_bot_pos = str(stockfishMove)[0] + str(stockfishMove)[1]
+            sec_bot_pos = str(stockfishMove)[2] + str(stockfishMove)[3]
+            move_to_robot(first_bot_pos, sec_bot_pos, get_piece_on_pos(first_bot_pos), get_piece_on_pos(sec_bot_pos))
+
+        # else:
+        #     moveCounter += 1
+        #     # Is player 2 playing?
+        #     if moveCounter % 2 != 0:
+        #         movesToPrint = move
+        #     else:
+        #         movesToPrint = "-" + move + "\n"
+        #     print("__"+moveCounter)
+        #print(movesToPrint)
+
+        # Update the board after the move was set.
+        generateBoard()
+
+
+def get_piece_on_pos(position):
+    column = letters.index(position[0]) + 1
+    row = 9 - int(position[1])
+    for i in window.grid_slaves(row, column):
+        return i.cget('text')
+
+def move_to_robot(begin_pos, end_pos, first_piece, second_piece):
+    if first_piece != "." and second_piece != ".":
+        capture = True
+        print(begin_pos + " " + end_pos + " True")
+    else:
+        capture = False
+        print(begin_pos + " " + end_pos + " False")
+
 
 
 click = lambda n, m: lambda: callback(n, m)
@@ -112,7 +136,7 @@ def callback(POS, PIECE):
                     gluePos = POS + move
                     compare = chess.Move.from_uci(gluePos)
                     if compare in board.legal_moves:
-                        print(gluePos) #TODO: Colour the squares
+                        #print(gluePos) #TODO: Colour the squares
                         change_color(gluePos)
             Label(window, text=PIECE, height=2, width=4).grid(column=12, row=12)
     else:
@@ -130,10 +154,11 @@ def callback(POS, PIECE):
                 gluePos = piece_start_pos + move
                 compare = chess.Move.from_uci(gluePos)
                 if compare in board.legal_moves:
-                    print(gluePos)  # TODO: Colour the squares
+                    #(gluePos)  # TODO: Colour the squares
                     change_color_white(gluePos)
 
-        sendMove(san_move)
+        sendMove(san_move, selectedPiece, PIECE, piece_start_pos, POS)
+
         Label(window, text=san_move, height=2, width=4).grid(column=12, row=12)
         selectedPiece = "0"
 
