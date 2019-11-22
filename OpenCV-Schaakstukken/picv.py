@@ -9,6 +9,8 @@ import copy
 class PiCV:
     connection = None
     intersects = None
+    horlines = None
+    vertlines = None
 
     def __init__(self):
         pass
@@ -67,19 +69,20 @@ class PiCV:
 
             hor, vert = self.filterHighest(hor, vert)
 
-            self.drawlines(hor, (255, 0, 0), imgcpy)
-            self.drawlines(vert, (0, 0, 255), imgcpy)
+            self.drawlines(hor, (0, 255, 0), imgcpy)
+            self.drawlines(vert, (0, 255, 0), imgcpy)
 
             # finding all line intersects
             intersects = self.find_intersects(hor, vert)
 
-            for i in intersects:
-                if i[0] != float('inf') or i[1] != float('inf'):
-                    cv.circle(imgcpy, (int(i[0]), int(i[1])), 5, (0, 255, 0))
+            self.horlines = hor
+            self.vertlines = vert
+            self.intersects = intersects
+
+            self.DrawIntersects(imgcpy)
 
             found = self.CheckLineCount(hor, vert, imgcpy)
 
-        self.intersects = intersects
         return imgcpy
 
 
@@ -233,3 +236,19 @@ class PiCV:
         cutout = frame[y:y+h, x:x+w]
 
         return cutout
+
+
+    def DrawOverlay(self, img):
+        self.OverlayLines(img)
+        self.DrawIntersects(img)
+
+
+    def OverlayLines(self, img):
+        self.drawlines(self.horlines, (0, 255, 0), img)
+        self.drawlines(self.vertlines, (0, 255, 0), img)
+
+
+    def DrawIntersects(self, img):
+        for i in self.intersects:
+            if i[0] != float('inf') or i[1] != float('inf'):
+                cv.circle(img, (int(i[0]), int(i[1])), 5, (0, 0, 0))
