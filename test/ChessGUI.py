@@ -60,42 +60,26 @@ def sendMove(moveToSend, start_piece, end_piece, start_pos, end_pos):
 
     # move = inputMove.get()
     move = moveToSend
+    capture = check_if_capture(end_pos)
     try:
         board.push_san(move)
     except:
-        #print("dat mag niet boef")
         userMoveValid = FALSE
 
     if userMoveValid:
-        # Are we playing against the AI? Default is TRUE for now.
         if ai == TRUE:
             result = engine.play(board, chess.engine.Limit(time=0.1))
             stockfishMove = result.move
-            board.push(stockfishMove)
 
-
-
-        # Are we playing against AI?
-        if ai == TRUE:
-            movesToPrint = move + "-" + str(stockfishMove) + "\n"
-
-            move_to_robot(start_pos, end_pos, start_piece, end_piece)
+            move_to_robot(start_pos, end_pos, capture) #robot voert zet uit
 
             first_bot_pos = str(stockfishMove)[0] + str(stockfishMove)[1]
             sec_bot_pos = str(stockfishMove)[2] + str(stockfishMove)[3]
-            move_to_robot(first_bot_pos, sec_bot_pos, get_piece_on_pos(first_bot_pos), get_piece_on_pos(sec_bot_pos))
 
-        # else:
-        #     moveCounter += 1
-        #     # Is player 2 playing?
-        #     if moveCounter % 2 != 0:
-        #         movesToPrint = move
-        #     else:
-        #         movesToPrint = "-" + move + "\n"
-        #     print("__"+moveCounter)
-        #print(movesToPrint)
+            capture2 = check_if_capture(sec_bot_pos) #wordt bepaald of volgende zet een capture is
 
-        # Update the board after the move was set.
+            board.push(stockfishMove)
+            move_to_robot(first_bot_pos, sec_bot_pos, capture2) #robot voert zet uit
         generateBoard()
 
 
@@ -105,12 +89,24 @@ def get_piece_on_pos(position):
     for i in window.grid_slaves(row, column):
         return i.cget('text')
 
-def move_to_robot(begin_pos, end_pos, first_piece, second_piece):
-    if first_piece != "." and second_piece != ".":
+def position_has_piece(position):
+    if(board.piece_at((int(position[1]) - 1) * 8 + (letters.index(position[0]))) is not None):
+        return True;
+
+def check_if_capture(end_pos):
+    print("_____" + str(len(str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0])))))))
+    if len(str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0]))))) > 1:
+        capture = False
+    else:
         capture = True
+    return capture
+
+def move_to_robot(begin_pos, end_pos, capture):
+    print("stuk op nieuwe pos: " + str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0])))))
+    print(len(str(board.piece_at((int(begin_pos[1]) - 1) * 8 + (letters.index(begin_pos[0]))))))
+    if capture == True:
         print(begin_pos + " " + end_pos + " True")
     else:
-        capture = False
         print(begin_pos + " " + end_pos + " False")
 
 
