@@ -130,6 +130,3 @@ dmypy.json
 test/.idea/workspace.xml
 test/.idea/workspace.xml
 test/.idea
-*.xml
-*.iml
-*.py
