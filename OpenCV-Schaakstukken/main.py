@@ -7,7 +7,7 @@ comp = pc.piececomparer()
 comp.loadshapes()
 
 camera = picv.PiCV()
-camera.connect()
+camera.connect('192.168.0.103')
 
 foundgrid = False
 
@@ -21,8 +21,25 @@ cv.destroyAllWindows()
 
 cv.imshow('grid', grid)
 
-for i in range(0,8):
-    for j in range(0,8):
-        pion = camera.GetSquare(j, i)
-        match, shapename, matchcount = comp.detectpiece(pion)
-        print('x' + str(j) + 'y' + str(i) + ' matches: ' + str(matchcount))
+pion = camera.GetSquare(1, 1)
+match, shapename = comp.detectpiece(pion)
+
+print('1,1 is ' + shapename)
+
+pion = camera.GetSquare(0, 0)
+match, shapename = comp.detectpiece(pion)
+
+print('0,0 is ' + shapename)
+
+pion = camera.GetSquare(1, 0)
+match, shapename = comp.detectpiece(pion)
+
+print('0,1 is ' + shapename)
+
+# for x in range(0,3):
+#     for y in range(0,3):
+#         pion = camera.GetSquare(x, y)
+#         match, shapename, matchcount = comp.detectpiece(pion)
+#         print(str(x) + 'x' + str(y) + 'y: ' + str(matchcount))
+
+cv.waitKey(0)
