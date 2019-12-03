@@ -6,6 +6,8 @@ from tkinter import *
 
 #installeer het TTF bestand voor het custom font
 window = Tk()
+gameOver = Toplevel(master=window)
+gameOver.destroy()
 board = chess.Board()
 engine = chess.engine.SimpleEngine.popen_uci('stockfish-10-win/Windows/stockfish_10_x64.exe')  #Engine
 
@@ -216,7 +218,8 @@ def reset():
     global gameOver
     global selectedPiece
     global piece_start_pos
-    gameOver.destroy()
+    if gameOver is not None:
+        gameOver.destroy()
     board.reset()
     selectedPiece = "0"
     piece_start_pos = ""
