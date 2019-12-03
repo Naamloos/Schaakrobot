@@ -220,7 +220,6 @@ def reset():
     board.reset()
     selectedPiece = "0"
     piece_start_pos = ""
-    print(board.is_game_over())
     generateBoard()
 
 
