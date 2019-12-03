@@ -50,7 +50,7 @@ def sendMove(moveToSend, start_piece, end_piece, start_pos, end_pos):
             result = engine.play(board, chess.engine.Limit(time=0.1))
             stockfishMove = result.move
 
-            move_to_robot(start_pos, end_pos, capture) #robot voert zet uit
+            move_to_robot(start_pos, end_pos, capture) #mensen zet
 
             first_bot_pos = str(stockfishMove)[0] + str(stockfishMove)[1]
             sec_bot_pos = str(stockfishMove)[2] + str(stockfishMove)[3]
@@ -205,7 +205,15 @@ def generateBoard():
             counterX = 1
     if board.is_game_over():
         Label(window, font="Helvetica 30 bold", width=4).grid(column=10, row=4)  # getallen aan de zijkant
-        Label(window, text="GAME OVER", font="Helvetica 30 bold").grid(column=11, row=4)  # getallen aan de zijkant
+        global gameOver
+        gameOver = Label(window, text="GAME OVER", font="Helvetica 30 bold").grid(column=11, row=4)  # getallen aan de zijkant
+    Button(window, text="restart", command=reset).grid(column=11, row=5)
+def reset():
+    global gameOver
+    board.reset()
+    print(board.is_game_over())
+    generateBoard()
+
 
 
 
