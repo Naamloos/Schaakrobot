@@ -30,27 +30,6 @@ tile_width = 3
 
 set_moves = []
 
-# Makeshift Switch function that converts the letters into pictures.
-# @arg: The letter we're gonna convert.
-def switch(arg):  # TODO: BRAM ZORG DAT DIT WERKT
-    switch = {
-        "p": Image.open("SchaakstukkenPNGs/PionBlauw.png"),
-        "P": Image.open("SchaakstukkenPNGs/PionRood.png"),
-        "r": Image.open("SchaakstukkenPNGs/TorenBlauw.png"),
-        "R": Image.open("SchaakstukkenPNGs/TorenRood.png"),
-        "n": Image.open("SchaakstukkenPNGs/PaardBlauw.png"),
-        "N": Image.open("SchaakstukkenPNGs/PaardRood.png"),
-        "b": Image.open("SchaakstukkenPNGs/LoperBlauw.png"),
-        "B": Image.open("SchaakstukkenPNGs/LoperRood.png"),
-        "q": Image.open("SchaakstukkenPNGs/KoniningBlauw.png"),
-        "Q": Image.open("SchaakstukkenPNGs/KoniningRood.png"),
-        "k": Image.open("SchaakstukkenPNGs/KoningBlauw.png"),
-        "K": Image.open("SchaakstukkenPNGs/KoningRood.png")
-    }
-    file = switch.get(arg, ".")
-    return file
-
-
 # outputLabel = Label(window, text="", height=2, width=4).grid(column=12, row=12)
 
 # Function to send the move to the board, input it into the AI if active, and update the GUI
@@ -94,20 +73,26 @@ def position_has_piece(position):
         return True;
 
 def check_if_capture(end_pos):
-    print("_____" + str(len(str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0])))))))
+#    print("_____" + str(len(str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0])))))))
     if len(str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0]))))) > 1:
         capture = False
     else:
         capture = True
     return capture
 
-def move_to_robot(begin_pos, end_pos, capture):
+def move_to_robot(begin_pos, end_pos, mode):
     print("stuk op nieuwe pos: " + str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0])))))
     print(len(str(board.piece_at((int(begin_pos[1]) - 1) * 8 + (letters.index(begin_pos[0]))))))
-    if capture == True:
+    if mode == 0:
+        print(begin_pos + " " + end_pos + " False")
+    elif mode == 1:
         print(begin_pos + " " + end_pos + " True")
     else:
-        print(begin_pos + " " + end_pos + " False")
+        move = begin_pos + end_pos
+        if board.is_kingside_castling(move):
+            print(begin_pos + " " + end_pos + "Kingside Castle")
+        elif board.is_queenside_castling(move):
+            print(begin_pos + " " + end_pos + "Queenside Castle")
 
 
 
@@ -152,7 +137,12 @@ def callback(POS, PIECE):
                 if compare in board.legal_moves:
                     #(gluePos)  # TODO: Colour the squares
                     change_color_white(gluePos)
-
+                    if board.is_kingside_castling(compare):
+                        print("kingside castle detected")
+                        san_move = "O-O"
+                    elif board.is_queenside_castling(compare):
+                        print("queenside castle detected")
+                        san_move = "O-O-O"
         sendMove(san_move, selectedPiece, PIECE, piece_start_pos, POS)
 
         Label(window, text=san_move, height=2, width=4).grid(column=12, row=12)
