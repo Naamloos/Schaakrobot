@@ -80,22 +80,13 @@ def check_if_capture(end_pos):
         capture = True
     return capture
 
-def move_to_robot(begin_pos, end_pos, mode):
+def move_to_robot(begin_pos, end_pos, capture):
     print("stuk op nieuwe pos: " + str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0])))))
     print(len(str(board.piece_at((int(begin_pos[1]) - 1) * 8 + (letters.index(begin_pos[0]))))))
-    if mode == 0:
-        print(begin_pos + " " + end_pos + " False")
-    elif mode == 1:
+    if capture == TRUE:
         print(begin_pos + " " + end_pos + " True")
     else:
-        move = begin_pos + end_pos
-        if board.is_kingside_castling(move):
-            print(begin_pos + " " + end_pos + "Kingside Castle")
-        elif board.is_queenside_castling(move):
-            print(begin_pos + " " + end_pos + "Queenside Castle")
-
-
-
+        print(begin_pos + " " + end_pos + " False")
 click = lambda n, m: lambda: callback(n, m)
 
 selectedPiece = "0"
