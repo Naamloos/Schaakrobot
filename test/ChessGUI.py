@@ -1,11 +1,10 @@
+from logging import exception
 from tkinter import *
 import chess
 import chess.engine
 from tkinter import *
 
 #installeer het TTF bestand voor het custom font
-
-
 window = Tk()
 board = chess.Board()
 engine = chess.engine.SimpleEngine.popen_uci('stockfish-10-win/Windows/stockfish_10_x64.exe')  #Engine
@@ -204,13 +203,23 @@ def generateBoard():
             counterY = counterY + 1
             counterX = 1
     if board.is_game_over():
-        Label(window, font="Helvetica 30 bold", width=4).grid(column=10, row=4)  # getallen aan de zijkant
+        # Label(window, font="Helvetica 30 bold", width=4).grid(column=10, row=4)  # getallen aan de zijkant
+        # global gameOver
+        # gameOver = Label(window, text="GAME OVER", font="Helvetica 30 bold").grid(column=11, row=4)  # getallen aan de zijkant
         global gameOver
-        gameOver = Label(window, text="GAME OVER", font="Helvetica 30 bold").grid(column=11, row=4)  # getallen aan de zijkant
+        gameOver = Toplevel(master=window)
+        gameOver.title("Game Over!")
+        Label(gameOver, text="Game over!").grid(column=0, row=1)
+        Button(gameOver, text="restart", command=reset).grid(column=1, row=1)
     Button(window, text="restart", command=reset).grid(column=11, row=5)
 def reset():
     global gameOver
+    global selectedPiece
+    global piece_start_pos
+    gameOver.destroy()
     board.reset()
+    selectedPiece = "0"
+    piece_start_pos = ""
     print(board.is_game_over())
     generateBoard()
 
