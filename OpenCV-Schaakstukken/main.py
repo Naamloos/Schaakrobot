@@ -2,6 +2,7 @@
 import picv
 import cv2 as cv
 import piececomparer as pc
+import RedOrBlue
 
 comp = pc.piececomparer()
 comp.loadshapes()
@@ -21,25 +22,9 @@ cv.destroyAllWindows()
 
 cv.imshow('grid', grid)
 
-pion = camera.GetSquare(1, 1)
-match, shapename = comp.detectpiece(pion)
-
-print('1,1 is ' + shapename)
-
-pion = camera.GetSquare(0, 0)
-match, shapename = comp.detectpiece(pion)
-
-print('0,0 is ' + shapename)
-
-pion = camera.GetSquare(1, 0)
-match, shapename = comp.detectpiece(pion)
-
-print('0,1 is ' + shapename)
-
-# for x in range(0,3):
-#     for y in range(0,3):
-#         pion = camera.GetSquare(x, y)
-#         match, shapename, matchcount = comp.detectpiece(pion)
-#         print(str(x) + 'x' + str(y) + 'y: ' + str(matchcount))
+for i in range(0,8):
+    for j in range(0, 8):
+        pion = camera.GetSquare(i, j)
+        # this will loop over every single square
 
 cv.waitKey(0)

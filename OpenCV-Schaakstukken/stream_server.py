@@ -14,13 +14,13 @@ def process_frame(img):
 	zwartwit = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
 	# make binary threshold
-	tresh = cv.adaptiveThreshold(zwartwit, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 111, 6)
+	tresh = cv.adaptiveThreshold(zwartwit, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 1111, 7)
 
 	# edge detection on the binary threshold
-	edges = cv.Canny(tresh, 100, 800)
+	edges = cv.Canny(tresh, 100, 300)
 
 	# find lines
-	lines = cv.HoughLines(edges, 0.55, np.pi / 175, 75)
+	lines = cv.HoughLines(edges, 0.55, np.pi / 180, 95)
 
 	hor, vert = divide_hor_vert(lines)
 
@@ -219,7 +219,7 @@ def CheckLineCount(hor, vert, img):
 # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
 # all interfaces)
 server_socket = socket.socket()
-server_socket.bind(('192.168.0.102', 8002))
+server_socket.bind(('192.168.0.103', 8002))
 server_socket.listen(0)
 print('listening')
 
