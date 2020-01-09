@@ -1,12 +1,13 @@
+from logging import exception
 from tkinter import *
 import chess
 import chess.engine
 from tkinter import *
 
 #installeer het TTF bestand voor het custom font
-
-
 window = Tk()
+gameOver = Toplevel(master=window)
+gameOver.destroy()
 board = chess.Board()
 engine = chess.engine.SimpleEngine.popen_uci('stockfish-10-win/Windows/stockfish_10_x64.exe')  #Engine
 
@@ -30,27 +31,6 @@ tile_width = 3
 
 set_moves = []
 
-# Makeshift Switch function that converts the letters into pictures.
-# @arg: The letter we're gonna convert.
-def switch(arg):  # TODO: BRAM ZORG DAT DIT WERKT
-    switch = {
-        "p": Image.open("SchaakstukkenPNGs/PionBlauw.png"),
-        "P": Image.open("SchaakstukkenPNGs/PionRood.png"),
-        "r": Image.open("SchaakstukkenPNGs/TorenBlauw.png"),
-        "R": Image.open("SchaakstukkenPNGs/TorenRood.png"),
-        "n": Image.open("SchaakstukkenPNGs/PaardBlauw.png"),
-        "N": Image.open("SchaakstukkenPNGs/PaardRood.png"),
-        "b": Image.open("SchaakstukkenPNGs/LoperBlauw.png"),
-        "B": Image.open("SchaakstukkenPNGs/LoperRood.png"),
-        "q": Image.open("SchaakstukkenPNGs/KoniningBlauw.png"),
-        "Q": Image.open("SchaakstukkenPNGs/KoniningRood.png"),
-        "k": Image.open("SchaakstukkenPNGs/KoningBlauw.png"),
-        "K": Image.open("SchaakstukkenPNGs/KoningRood.png")
-    }
-    file = switch.get(arg, ".")
-    return file
-
-
 # outputLabel = Label(window, text="", height=2, width=4).grid(column=12, row=12)
 
 # Function to send the move to the board, input it into the AI if active, and update the GUI
@@ -71,7 +51,7 @@ def sendMove(moveToSend, start_piece, end_piece, start_pos, end_pos):
             result = engine.play(board, chess.engine.Limit(time=0.1))
             stockfishMove = result.move
 
-            move_to_robot(start_pos, end_pos, capture) #robot voert zet uit
+            move_to_robot(start_pos, end_pos, capture) #mensen zet
 
             first_bot_pos = str(stockfishMove)[0] + str(stockfishMove)[1]
             sec_bot_pos = str(stockfishMove)[2] + str(stockfishMove)[3]
@@ -94,7 +74,7 @@ def position_has_piece(position):
         return True;
 
 def check_if_capture(end_pos):
-    print("_____" + str(len(str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0])))))))
+#    print("_____" + str(len(str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0])))))))
     if len(str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0]))))) > 1:
         capture = False
     else:
@@ -104,13 +84,10 @@ def check_if_capture(end_pos):
 def move_to_robot(begin_pos, end_pos, capture):
     print("stuk op nieuwe pos: " + str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0])))))
     print(len(str(board.piece_at((int(begin_pos[1]) - 1) * 8 + (letters.index(begin_pos[0]))))))
-    if capture == True:
+    if capture == TRUE:
         print(begin_pos + " " + end_pos + " True")
     else:
         print(begin_pos + " " + end_pos + " False")
-
-
-
 click = lambda n, m: lambda: callback(n, m)
 
 selectedPiece = "0"
@@ -152,7 +129,12 @@ def callback(POS, PIECE):
                 if compare in board.legal_moves:
                     #(gluePos)  # TODO: Colour the squares
                     change_color_white(gluePos)
-
+                    if board.is_kingside_castling(compare):
+                        print("kingside castle detected")
+                        san_move = "O-O"
+                    elif board.is_queenside_castling(compare):
+                        print("queenside castle detected")
+                        san_move = "O-O-O"
         sendMove(san_move, selectedPiece, PIECE, piece_start_pos, POS)
 
         Label(window, text=san_move, height=2, width=4).grid(column=12, row=12)
@@ -223,8 +205,26 @@ def generateBoard():
             counterY = counterY + 1
             counterX = 1
     if board.is_game_over():
-        Label(window, font="Helvetica 30 bold", width=4).grid(column=10, row=4)  # getallen aan de zijkant
-        Label(window, text="GAME OVER", font="Helvetica 30 bold").grid(column=11, row=4)  # getallen aan de zijkant
+        # Label(window, font="Helvetica 30 bold", width=4).grid(column=10, row=4)  # getallen aan de zijkant
+        # global gameOver
+        # gameOver = Label(window, text="GAME OVER", font="Helvetica 30 bold").grid(column=11, row=4)  # getallen aan de zijkant
+        global gameOver
+        gameOver = Toplevel(master=window)
+        gameOver.title("Game Over!")
+        Label(gameOver, text="Game over!").grid(column=0, row=1)
+        Button(gameOver, text="restart", command=reset).grid(column=1, row=1)
+    Button(window, text="restart", command=reset).grid(column=11, row=5)
+def reset():
+    global gameOver
+    global selectedPiece
+    global piece_start_pos
+    if gameOver is not None:
+        gameOver.destroy()
+    board.reset()
+    selectedPiece = "0"
+    piece_start_pos = ""
+    generateBoard()
+
 
 
 
