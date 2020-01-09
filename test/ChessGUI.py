@@ -3,6 +3,7 @@ from tkinter import *
 import chess
 import chess.engine
 from tkinter import *
+from Robot.Movement.MoveController import MoveController
 
 #installeer het TTF bestand voor het custom font
 window = Tk()
@@ -10,6 +11,7 @@ gameOver = Toplevel(master=window)
 gameOver.destroy()
 board = chess.Board()
 engine = chess.engine.SimpleEngine.popen_uci('stockfish-10-win/Windows/stockfish_10_x64.exe')  #Engine
+move = MoveController()
 
 ai = TRUE  # Boolean to decide if we're playing against the AI. DO NOT TOUCH AS IT CURRENTLY BREAKS THE CODE
 moveCounter = 0  # Counter for if we're gonna be playing human versus human
@@ -82,12 +84,17 @@ def check_if_capture(end_pos):
     return capture
 
 def move_to_robot(begin_pos, end_pos, capture):
+
     print("stuk op nieuwe pos: " + str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0])))))
     print(len(str(board.piece_at((int(begin_pos[1]) - 1) * 8 + (letters.index(begin_pos[0]))))))
     if capture == TRUE:
         print(begin_pos + " " + end_pos + " True")
     else:
         print(begin_pos + " " + end_pos + " False")
+
+    move.make_move(begin_pos, end_pos, capture)
+
+
 click = lambda n, m: lambda: callback(n, m)
 
 selectedPiece = "0"
@@ -159,9 +166,9 @@ def change_color(possiblePosition):
 
 def change_pos(pos, piece, color):
     if piece.isupper():
-        textcolor = "red"
-    else:
         textcolor = "blue"
+    else:
+        textcolor = "red"
     Xval = letters.index(pos[0]) + 1 #bepaald de xpositie en zet deze om naar een rij
     Yval = 9 - int(pos[1])          #zet de ypositie om naar een kolom
     Button(window, text=piece, height=tile_height, width=tile_width, bg=color, font=chess_font,
@@ -187,12 +194,12 @@ def generateBoard():
 
             if x != ".":  # image = piecePic
                 if x.isupper():
-                    btn = Button(window, text=x, height=tile_height, width=tile_width, foreground="red",
+                    btn = Button(window, text=x, height=tile_height, width=tile_width, foreground="blue",
                                  highlightthickness=0, bd=2, bg="white",
                                  font=chess_font, highlightbackground="black",
                                  command=click(currentPos, x)).grid(column=counterX, row=counterY)
                 else:
-                    btn = Button(window, text=x,  height=tile_height, width=tile_width, foreground="blue", highlightthickness=0, bd=2, bg="white",
+                    btn = Button(window, text=x,  height=tile_height, width=tile_width, foreground="red", highlightthickness=0, bd=2, bg="white",
                                  font=chess_font, highlightbackground="black", command=click(currentPos, x)).grid(column=counterX, row=counterY)
             else:
                 #btn = Button(window, text=x, height=2, width=4, command=click(currentPos, x)).grid(column=counterX,row=counterY)
