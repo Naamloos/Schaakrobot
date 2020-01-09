@@ -237,6 +237,20 @@ class PiCV:
 
         return cutout, x, y, w, h
 
+    def GetSquareIndices(self, hor, vert):
+        i = self.get_pointgrid(self.intersects, (9, 9))
+
+        p1 = i[hor][vert]
+        p2 = i[hor + 1][vert]
+        p3 = i[hor][vert + 1]
+
+        x = int(p1[0])
+        y = int(p1[1])
+        w = abs(int(p1[0] - p2[0]))
+        h = abs(int(p1[1] - p3[1]))
+
+        return x, y, w, h
+
 
     def DrawOverlay(self, img):
         self.OverlayLines(img)
@@ -252,3 +266,36 @@ class PiCV:
         for i in self.intersects:
             if i[0] != float('inf') or i[1] != float('inf'):
                 cv.circle(img, (int(i[0]), int(i[1])), 5, (0, 0, 0))
+
+    def convertPosition(self, input):
+        hor = ["a", "b", "c", "d", "e", "f", "g", "h"]
+        vert = ["8", "7", "6", "5", "4", "3", "2", "1"]
+
+        horchar = str(input[0])
+        vertchar = str(input[1])
+
+        return hor.index(horchar), vert.index(vertchar)
+
+
+
+    def GetColor(self, hor, vert):
+        imginput = self.getFrame(self.connection)
+
+        x, y, w, h = self.GetSquareIndices(hor, vert)
+
+        blue_low = (50, 50, 50)
+        blue_high = (255, 80, 50)
+        blue = 255 in cv.inRange(imginput, blue_low, blue_high)[y:y+h, x:x+w]
+
+        red_low = (0, 0, 150)
+        red_high = (77, 77, 255)
+        red = 255 in cv.inRange(imginput, red_low, red_high)[y:y+h, x:x+w]
+
+
+        color = 'None'
+        if red:
+            color = 'Red'
+        if blue:
+            color = 'Blue'
+
+        return color, x, y, w, h
