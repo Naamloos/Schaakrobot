@@ -235,7 +235,7 @@ class PiCV:
 
         cutout = frame[y:y+h, x:x+w]
 
-        return cutout
+        return cutout, x, y, w, h
 
 
     def DrawOverlay(self, img):

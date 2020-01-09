@@ -15,6 +15,7 @@ def process_frame(img):
 
 	# make binary threshold
 	tresh = cv.adaptiveThreshold(zwartwit, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 1111, 7)
+	tresh_inv = cv.adaptiveThreshold(zwartwit, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY_INV, 1111, 7)
 
 	# edge detection on the binary threshold
 	edges = cv.Canny(tresh, 100, 300)
@@ -45,7 +46,7 @@ def process_frame(img):
 	#blocks = get_all_blocks_grid(grid, img)
 
 	CheckLineCount(hor, vert, imgcpy)
-	return zwartwit, tresh, edges, imgcpy, None
+	return zwartwit, tresh, edges, imgcpy, tresh_inv, None
 
 
 # functions
@@ -248,13 +249,14 @@ try:
 		img = cv.imdecode(file_bytes, cv.IMREAD_COLOR)
 
 		# TODO: find out whether blocks is correct
-		p1, p2, p3, p4, blocks = process_frame(img)
+		p1, p2, p3, p4, p5, blocks = process_frame(img)
 
 		cv.imshow("Video", img)
 		cv.imshow("Processed Video1", p1)
 		cv.imshow("Processed Video2", p2)
 		cv.imshow("Processed Video3", p3)
 		cv.imshow("Processed Video4", p4)
+		cv.imshow("tresh_inv", p5)
 
 
 		if cv.waitKey(1) == ord("q"):
