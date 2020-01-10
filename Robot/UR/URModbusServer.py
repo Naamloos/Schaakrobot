@@ -42,7 +42,6 @@ class URModbusServer:
 
         if packet is None:
             time.sleep(0.5)
-            print("Modbus Error: retrying")
             return self.get_tcp_position()
         else:
             x = self._format(packet[9:11]) / 10000

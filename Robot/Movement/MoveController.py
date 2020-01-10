@@ -8,9 +8,10 @@ from Robot.UR.Constants import Constants
 
 
 class MoveController:
-    def __init__(self):
+    def __init__(self, CAMERA):
         self.CONST = Constants()
         self.positions = PositionController()
+        self.CAMERA = CAMERA
 
     def set_magnet(self, set_bool):
         state = self.CONST.ROBOT.set_io(self.CONST.MAGNET_IO, set_bool)
@@ -37,12 +38,31 @@ class MoveController:
         coordinate.append(height)
         return coordinate
 
-    def make_move(self, from_pos, to_pos, capture):
-        if capture:
-            issuccess = self.capture(from_pos, to_pos)
+    def make_move(self, from_pos, to_pos, capture, robot):
+        while True:
+            if capture:
+                issuccess = self.capture(from_pos, to_pos)
+            else:
+                issuccess = self.move(from_pos, to_pos)
+            x, y = self.CAMERA.convertPosition(to_pos)
+            color = self.CAMERA.GetColor(x, y)[0]
+            print(color)
+            if self.check_move(color, robot):
+                return issuccess
+
+    def check_move(self, color, robot):
+        result = None
+        if robot:
+            if color == 'Blue' or color == 'None':
+                result = False
+            else:
+                result = True
         else:
-            issuccess = self.move(from_pos, to_pos)
-        return issuccess
+            if color == 'Red' or color == 'None':
+                result = False
+            else:
+                result = True
+        return result
 
     def move(self, from_pos, to_pos):
         self.goto_start_point()

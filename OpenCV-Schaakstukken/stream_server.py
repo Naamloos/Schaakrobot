@@ -220,7 +220,7 @@ def CheckLineCount(hor, vert, img):
 # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
 # all interfaces)
 server_socket = socket.socket()
-server_socket.bind(('192.168.0.103', 8002))
+server_socket.bind(('192.168.0.104', 8002))
 server_socket.listen(0)
 print('listening')
 

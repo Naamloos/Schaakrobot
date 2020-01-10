@@ -4,14 +4,30 @@ import chess
 import chess.engine
 from tkinter import *
 from Robot.Movement.MoveController import MoveController
+from Vision.picv import PiCV
+import cv2 as cv
 
 #installeer het TTF bestand voor het custom font
+
 window = Tk()
 gameOver = Toplevel(master=window)
 gameOver.destroy()
 board = chess.Board()
 engine = chess.engine.SimpleEngine.popen_uci('stockfish-10-win/Windows/stockfish_10_x64.exe')  #Engine
-move = MoveController()
+CAMERA = PiCV()
+CAMERA.connect('192.168.0.104')
+print('connected')
+move = MoveController(CAMERA)
+move.goto_start_point()
+CAMERA.startLivestream()
+CAMERA.TryFindGrid()
+print(CAMERA.GetColor(4, 4))
+print(CAMERA.GetColor(1, 1))
+print(CAMERA.GetColor(2, 1))
+print(CAMERA.GetColor(7, 7))
+print(CAMERA.GetColor(5, 7))
+print('Grid Found')
+
 
 ai = TRUE  # Boolean to decide if we're playing against the AI. DO NOT TOUCH AS IT CURRENTLY BREAKS THE CODE
 moveCounter = 0  # Counter for if we're gonna be playing human versus human
@@ -53,7 +69,7 @@ def sendMove(moveToSend, start_piece, end_piece, start_pos, end_pos):
             result = engine.play(board, chess.engine.Limit(time=0.1))
             stockfishMove = result.move
 
-            move_to_robot(start_pos, end_pos, capture) #mensen zet
+            move_to_robot(start_pos, end_pos, capture, False) #mensen zet
 
             first_bot_pos = str(stockfishMove)[0] + str(stockfishMove)[1]
             sec_bot_pos = str(stockfishMove)[2] + str(stockfishMove)[3]
@@ -61,7 +77,7 @@ def sendMove(moveToSend, start_piece, end_piece, start_pos, end_pos):
             capture2 = check_if_capture(sec_bot_pos) #wordt bepaald of volgende zet een capture is
 
             board.push(stockfishMove)
-            move_to_robot(first_bot_pos, sec_bot_pos, capture2) #robot voert zet uit
+            move_to_robot(first_bot_pos, sec_bot_pos, capture2, True) #robot voert zet uit
         generateBoard()
 
 
@@ -83,7 +99,7 @@ def check_if_capture(end_pos):
         capture = True
     return capture
 
-def move_to_robot(begin_pos, end_pos, capture):
+def move_to_robot(begin_pos, end_pos, capture, robot):
 
     print("stuk op nieuwe pos: " + str(board.piece_at((int(end_pos[1]) - 1) * 8 + (letters.index(end_pos[0])))))
     print(len(str(board.piece_at((int(begin_pos[1]) - 1) * 8 + (letters.index(begin_pos[0]))))))
@@ -92,7 +108,7 @@ def move_to_robot(begin_pos, end_pos, capture):
     else:
         print(begin_pos + " " + end_pos + " False")
 
-    move.make_move(begin_pos, end_pos, capture)
+    move.make_move(begin_pos, end_pos, capture, robot)
 
 
 click = lambda n, m: lambda: callback(n, m)

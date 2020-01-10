@@ -1,6 +1,8 @@
 import io
 import socket
 import struct
+import threading
+
 import cv2 as cv
 import numpy as np
 import math
@@ -13,6 +15,7 @@ class PiCV:
     vertlines = None
 
     def __init__(self):
+        self.frameworking = False
         pass
 
 
@@ -24,9 +27,15 @@ class PiCV:
 
         # Accept a single connection and make a file-like object out of it
         self.connection = server_socket.accept()[0].makefile('rb')
+        self.frameworking = False
 
 
     def getFrame(self, connection):
+        while self.frameworking:
+            pass
+
+        self.frameworking = True
+
         image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
         if not image_len:
             return
@@ -41,6 +50,7 @@ class PiCV:
         file_bytes = np.asarray(bytearray(image_stream.read()), dtype=np.uint8)
         img = cv.imdecode(file_bytes, cv.IMREAD_COLOR)
 
+        self.frameworking = False
         return img
 
 
@@ -82,6 +92,7 @@ class PiCV:
             self.DrawIntersects(imgcpy)
 
             found = self.CheckLineCount(hor, vert, imgcpy)
+            pass
 
         return imgcpy
 
@@ -299,3 +310,21 @@ class PiCV:
             color = 'Blue'
 
         return color, x, y, w, h
+
+
+    def updatePreview(self):
+        img = self.getFrame(self.connection)
+        self.DrawOverlay(img)
+        cv.imshow('preview', img)
+
+    def startLivestream(self):
+        self.thread = threading.Thread(target=self.streamframe)
+        self.thread.start()
+
+    def streamframe(self):
+        cv.namedWindow('Stream', cv.WINDOW_NORMAL)
+        cv.resizeWindow('Stream', 500, 500)
+        while True:
+            frame = self.getFrame(self.connection)
+            cv.imshow('Stream', frame)
+            cv.waitKey(1)
