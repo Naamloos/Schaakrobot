@@ -216,8 +216,8 @@ class ModbusTCP:
                   "\n - Send: {} \n - Response: {}".format(self.__unit_id, mbap[3]))
             return True
         elif mbap[2] != len(response[6:]):
-            print("Modbus: Length mismatch"
-                  "\n - Length: {} \n - Remaining: {}".format(mbap[2], len(response[6:])))
+            # print("Modbus: Length mismatch"
+            #       "\n - Length: {} \n - Remaining: {}".format(mbap[2], len(response[6:])))
             return True
 
         function_code = struct.unpack(">B", function_code)

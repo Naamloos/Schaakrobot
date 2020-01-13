@@ -18,11 +18,6 @@ move = MoveController(CAMERA)
 move.goto_start_point()
 CAMERA.startLivestream()
 CAMERA.TryFindGrid()
-print(CAMERA.GetColor(4, 4))
-print(CAMERA.GetColor(1, 1))
-print(CAMERA.GetColor(2, 1))
-print(CAMERA.GetColor(7, 7))
-print(CAMERA.GetColor(5, 7))
 print('Grid Found')
 
 
