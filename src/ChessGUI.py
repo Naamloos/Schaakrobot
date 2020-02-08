@@ -12,7 +12,7 @@ gameOver.destroy()
 board = chess.Board()
 engine = chess.engine.SimpleEngine.popen_uci('stockfish-10-win/Windows/stockfish_10_x64.exe')  #Engine
 CAMERA = PiCV()
-CAMERA.connect('192.168.0.104')
+CAMERA.connect('192.168.0.3')
 print('connected')
 move = MoveController(CAMERA)
 move.goto_start_point()
@@ -24,7 +24,7 @@ print('Grid Found')
 ai = TRUE  # Boolean to decide if we're playing against the AI. DO NOT TOUCH AS IT CURRENTLY BREAKS THE CODE
 moveCounter = 0  # Counter for if we're gonna be playing human versus human
 window.title("Chess GUI")  # Setting a nice title.
-window.geometry('1100x700')
+window.geometry('800x700')
 squares = ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8",
            "b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8",
            "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8",

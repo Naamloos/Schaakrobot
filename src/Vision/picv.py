@@ -318,7 +318,7 @@ class PiCV:
 
     def streamframe(self):
         cv.namedWindow('Stream', cv.WINDOW_NORMAL)
-        cv.resizeWindow('Stream', 500, 500)
+        cv.resizeWindow('Stream', 950, 950)
         while True:
             frame = self.getFrame(self.connection)
             cv.imshow('Stream', frame)
