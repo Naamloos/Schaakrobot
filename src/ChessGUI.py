@@ -229,6 +229,19 @@ def generateBoard():
         Label(gameOver, text="Game over!").grid(column=0, row=1)
         Button(gameOver, text="restart", command=reset).grid(column=1, row=1)
     Button(window, text="restart", command=reset).grid(column=11, row=5)
+    Button(window, text="try refind grid", command=refindgrid).grid(column=12, row=5)
+    Button(window, text="toggle overlay", command=toggleOverlay).grid(column=13, row=5)
+
+
+def refindgrid():
+    CAMERA.TryFindGrid()
+    # This method is for quickly resetting the grid without having to restart the program
+
+
+def toggleOverlay():
+    # This method is for quickly toggling the overlay without restarting the program
+    CAMERA.toggleGrid()
+
 def reset():
     global gameOver
     global selectedPiece

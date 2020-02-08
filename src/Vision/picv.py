@@ -13,10 +13,14 @@ class PiCV:
     intersects = None
     horlines = None
     vertlines = None
+    viewgrid = False
 
     def __init__(self):
         self.frameworking = False
         pass
+
+    def toggleGrid(self):
+        self.viewgrid = not self.viewgrid
 
 
     def connect(self, ip):
@@ -321,5 +325,9 @@ class PiCV:
         cv.resizeWindow('Stream', 950, 950)
         while True:
             frame = self.getFrame(self.connection)
+
+            if self.viewgrid:
+                self.DrawOverlay(frame)
+
             cv.imshow('Stream', frame)
             cv.waitKey(1)
