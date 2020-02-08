@@ -10,3 +10,4 @@ Dit project maakt gebruik van de volgende packages, die te installeren zijn via 
 - Python-Chess `pip install python-chess`
 - OpenCV `pip install opencv-python`
 - TKinter (Standaard in python (?))
+- numpy `pip install numpy`
