@@ -1,3 +1,8 @@
+# About
+This repository is part of a project done by students at NHL Stenden, for a project where the goals was to make the UR-10 robot arm automatically play a game of chess against a human player. Because of safety concerns, the game is played on UI, but reflected in real-time by the robot.
+
+# Original README:
+
 # Schaakrobot
 Schaakrobot voor het project van INF2D 
 
